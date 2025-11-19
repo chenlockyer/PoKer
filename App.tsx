@@ -1,10 +1,12 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import GameScene from './components/GameScene';
 import UIOverlay from './components/UIOverlay';
-import { CardData, RotationMode } from './types';
+import { CardData, RotationMode, InteractionMode } from './types';
 
 const App: React.FC = () => {
   const [rotationMode, setRotationMode] = useState<RotationMode>(RotationMode.FLAT);
+  const [interactionMode, setInteractionMode] = useState<InteractionMode>(InteractionMode.QUICK);
   const [isFreezeMode, setIsFreezeMode] = useState(false);
   const [cards, setCards] = useState<CardData[]>([]);
 
@@ -40,6 +42,10 @@ const App: React.FC = () => {
         case '4': setRotationMode(RotationMode.TILTED_LEFT); break;
         case '5': setRotationMode(RotationMode.TILTED_RIGHT); break;
         case 'l': toggleFreezeMode(); break;
+        case 'tab': 
+            e.preventDefault();
+            setInteractionMode(prev => prev === InteractionMode.QUICK ? InteractionMode.PRECISION : InteractionMode.QUICK);
+            break;
       }
     };
 
@@ -51,6 +57,7 @@ const App: React.FC = () => {
     <div className="relative w-full h-screen bg-gray-900 overflow-hidden">
       <GameScene 
         rotationMode={rotationMode} 
+        interactionMode={interactionMode}
         isFreezeMode={isFreezeMode}
         cards={cards} 
         addCard={addCard} 
@@ -59,6 +66,8 @@ const App: React.FC = () => {
       <UIOverlay 
         currentMode={rotationMode}
         setMode={setRotationMode}
+        interactionMode={interactionMode}
+        setInteractionMode={setInteractionMode}
         isFreezeMode={isFreezeMode}
         setIsFreezeMode={() => toggleFreezeMode()}
         onClear={clearCards}

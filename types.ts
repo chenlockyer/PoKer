@@ -1,3 +1,4 @@
+
 export interface CardData {
   id: string;
   position: [number, number, number];
@@ -14,4 +15,9 @@ export enum RotationMode {
   VERTICAL_Z = 'VERTICAL_Z',
   TILTED_LEFT = 'TILTED_LEFT',
   TILTED_RIGHT = 'TILTED_RIGHT'
+}
+
+export enum InteractionMode {
+  QUICK = 'QUICK',
+  PRECISION = 'PRECISION'
 }

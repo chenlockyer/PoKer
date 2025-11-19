@@ -1,17 +1,19 @@
+
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Sky, Environment } from '@react-three/drei';
 import PhysicsWorld from './PhysicsWorld';
-import { CardData, RotationMode } from '../types';
+import { CardData, RotationMode, InteractionMode } from '../types';
 
 interface GameSceneProps {
   rotationMode: RotationMode;
+  interactionMode: InteractionMode;
   isFreezeMode: boolean;
   cards: CardData[];
   addCard: (card: CardData) => void;
 }
 
-const GameScene: React.FC<GameSceneProps> = ({ rotationMode, isFreezeMode, cards, addCard }) => {
+const GameScene: React.FC<GameSceneProps> = ({ rotationMode, interactionMode, isFreezeMode, cards, addCard }) => {
   return (
     <div className="w-full h-full absolute top-0 left-0 z-0">
       <Canvas shadows camera={{ position: [0, 8, 12], fov: 45 }}>
@@ -21,6 +23,7 @@ const GameScene: React.FC<GameSceneProps> = ({ rotationMode, isFreezeMode, cards
           
           <PhysicsWorld 
             rotationMode={rotationMode} 
+            interactionMode={interactionMode}
             isFreezeMode={isFreezeMode}
             cards={cards} 
             addCard={addCard} 
