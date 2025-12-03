@@ -2,18 +2,32 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import GameScene from './components/GameScene';
 import UIOverlay from './components/UIOverlay';
-import { CardData, RotationMode, InteractionMode } from './types';
+import { CardData, RotationMode, InteractionMode, PointerMode } from './types';
 
 const App: React.FC = () => {
   const [rotationMode, setRotationMode] = useState<RotationMode>(RotationMode.FLAT);
   const [interactionMode, setInteractionMode] = useState<InteractionMode>(InteractionMode.QUICK);
+  const [pointerMode, setPointerMode] = useState<PointerMode>(PointerMode.PLACE);
   const [isFreezeMode, setIsFreezeMode] = useState(false);
   const [cards, setCards] = useState<CardData[]>([]);
+  const [draggingCardId, setDraggingCardId] = useState<string | null>(null);
 
   const addCard = useCallback((card: CardData) => {
     // When adding a card, ensure it follows the current freeze mode
     const newCard = { ...card, locked: isFreezeMode };
     setCards(prev => [...prev, newCard]);
+  }, [isFreezeMode]);
+
+  const removeCard = useCallback((id: string) => {
+    setCards(prev => prev.filter(c => c.id !== id));
+  }, []);
+
+  const updateCard = useCallback((id: string, position: [number, number, number], rotation: [number, number, number]) => {
+    setCards(prev => prev.map(c => 
+      c.id === id 
+        ? { ...c, position, rotation, locked: isFreezeMode } // Apply current freeze mode on move
+        : c
+    ));
   }, [isFreezeMode]);
 
   const clearCards = useCallback(() => {
@@ -51,6 +65,13 @@ const App: React.FC = () => {
             e.preventDefault();
             setInteractionMode(prev => prev === InteractionMode.QUICK ? InteractionMode.PRECISION : InteractionMode.QUICK);
             break;
+        case 'delete':
+        case 'backspace':
+            setPointerMode(PointerMode.DELETE);
+            break;
+        case 'escape':
+            setPointerMode(PointerMode.PLACE);
+            break;
       }
     };
 
@@ -63,9 +84,14 @@ const App: React.FC = () => {
       <GameScene 
         rotationMode={rotationMode} 
         interactionMode={interactionMode} 
+        pointerMode={pointerMode}
         isFreezeMode={isFreezeMode}
         cards={cards} 
         addCard={addCard} 
+        removeCard={removeCard}
+        updateCard={updateCard}
+        draggingCardId={draggingCardId}
+        setDraggingCardId={setDraggingCardId}
       />
       
       <UIOverlay 
@@ -73,6 +99,8 @@ const App: React.FC = () => {
         setMode={setRotationMode}
         interactionMode={interactionMode}
         setInteractionMode={setInteractionMode}
+        pointerMode={pointerMode}
+        setPointerMode={setPointerMode}
         isFreezeMode={isFreezeMode}
         setIsFreezeMode={() => toggleFreezeMode()}
         onClear={clearCards}

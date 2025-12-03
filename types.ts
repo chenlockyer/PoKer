@@ -26,3 +26,9 @@ export enum InteractionMode {
   QUICK = 'QUICK',
   PRECISION = 'PRECISION'
 }
+
+export enum PointerMode {
+  PLACE = 'PLACE',
+  DELETE = 'DELETE',
+  MOVE = 'MOVE'
+}
